@@ -5,8 +5,8 @@ import {
   isValidName,
   isValidPhoneNumber,
 } from "../utils/validationUtils";
+
 export const fetchUsers = async () => {
-  console.log("entrou no fetchUsers");
   const { data, error } = await supabase.from("users").select("*");
 
   if (error) {
@@ -15,6 +15,16 @@ export const fetchUsers = async () => {
   }
 
   return data;
+};
+
+export const getUserById = async (id) => {
+  const users = await fetchUsers();
+  return users.find((user) => user.id === id);
+};
+
+export const getUserByPhoneNumber = async (phoneNumber) => {
+  const users = await fetchUsers();
+  return users.find((user) => user.phone_number === phoneNumber);
 };
 
 export async function adicionarCliente(user) {

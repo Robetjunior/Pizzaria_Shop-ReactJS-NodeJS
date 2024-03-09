@@ -4,6 +4,15 @@ import * as usersController from "../controllers/usersController.js"; // ajuste 
 
 const router = express.Router();
 
+// Rota para buscar cliente por ID
+router.get("/:id", usersController.getUserByIdController);
+
+// Rota para buscar cliente por número de telefone
+router.get(
+  "/phone/:phoneNumber",
+  usersController.getUserByPhoneNumberController
+);
+
 // Rota para listar todos os usuários
 router.get("/", usersController.getUsers);
 
