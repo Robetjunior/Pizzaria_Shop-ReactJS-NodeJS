@@ -42,7 +42,13 @@ export async function adicionarCliente(user) {
   const { data, error } = await supabase
     .from("users")
     .insert([
-      { name: user.name, email: user.email, phone_number: user.phone_number },
+      {
+        name: user.name,
+        email: user.email,
+        phone_number: user.phone_number,
+        x_coordinate: user.x_coordinate,
+        y_coordinate: user.y_coordinate,
+      },
     ]);
 
   if (error) {
