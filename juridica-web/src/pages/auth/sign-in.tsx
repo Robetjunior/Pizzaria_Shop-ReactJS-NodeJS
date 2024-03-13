@@ -7,6 +7,8 @@ import { Input } from "../../components/ui/input";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signIn } from "../../api/sign-in";
 
 const signInForm = z.object({
   email: z.string().email(),
@@ -21,11 +23,15 @@ export function SignIn() {
     formState: { isSubmitting },
   } = useForm<SignInForm>();
 
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
+  });
+
   async function handleSignIn(data: SignInForm) {
     try {
       console.log(data);
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await authenticate({ email: data.email });
 
       toast.success("Enviamos um link de autentocação para seu e-mail", {
         action: {

@@ -8,7 +8,6 @@ import {
 
 export const fetchUsers = async () => {
   const { data, error } = await supabase.from("users").select("*");
-
   if (error) {
     console.error("Error fetching users:", error);
     return null;
@@ -22,9 +21,58 @@ export const getUserById = async (id) => {
   return users.find((user) => user.id === id);
 };
 
+export const storeAuthCode = async (userId, authCode) => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({ code: authCode })
+    .match({ id: userId });
+
+  console.log(authCode, data);
+  if (error) {
+    console.error("Erro ao armazenar código de autenticação:", error);
+    return null;
+  }
+
+  return data;
+};
+
+export const getUserIdByAuthCode = async (authCode) => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id")
+    .eq("code", authCode)
+    .single();
+
+  if (error || !data) {
+    console.error("Erro ao buscar usuário pelo código de autenticação:", error);
+    return null;
+  }
+
+  return data.id;
+};
+
+export const deleteAuthCode = async (authCode) => {
+  const { error } = await supabase
+    .from("users")
+    .update({ code: null }) // Remover o código de autenticação
+    .eq("code", authCode);
+
+  if (error) {
+    console.error("Erro ao deletar código de autenticação:", error);
+    return null;
+  }
+
+  return true;
+};
+
 export const getUserByPhoneNumber = async (phoneNumber) => {
   const users = await fetchUsers();
   return users.find((user) => user.phone_number === phoneNumber);
+};
+
+export const getUserByEmail = async (email) => {
+  const users = await fetchUsers();
+  return users.find((user) => user.email === email);
 };
 
 export async function adicionarCliente(user) {
@@ -39,17 +87,15 @@ export async function adicionarCliente(user) {
     };
   }
 
-  const { data, error } = await supabase
-    .from("users")
-    .insert([
-      {
-        name: user.name,
-        email: user.email,
-        phone_number: user.phone_number,
-        x_coordinate: user.x_coordinate,
-        y_coordinate: user.y_coordinate,
-      },
-    ]);
+  const { data, error } = await supabase.from("users").insert([
+    {
+      name: user.name,
+      email: user.email,
+      phone_number: user.phone_number,
+      x_coordinate: user.x_coordinate,
+      y_coordinate: user.y_coordinate,
+    },
+  ]);
 
   if (error) {
     console.error("Erro ao adicionar cliente:", error);

@@ -6,7 +6,7 @@ const cors = require("cors"); // Importa o pacote CORS
 const api = require("./api/api");
 
 const app = express();
-const port = 3000;
+const port = 3333;
 
 app.use(cors()); // Aplica o CORS
 app.use(bodyParser.json());
