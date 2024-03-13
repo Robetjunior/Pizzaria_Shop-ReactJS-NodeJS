@@ -1,6 +1,5 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors"); // Importa o pacote CORS
+const cors = require("cors");
 
 // Importa a configuração da API
 const api = require("./api/api");
@@ -8,8 +7,11 @@ const api = require("./api/api");
 const app = express();
 const port = 3333;
 
-app.use(cors()); // Aplica o CORS
-app.use(bodyParser.json());
+// Aplica o CORS
+app.use(cors());
+
+// Substitui bodyParser.json() pelo express.json() para análise de corpos de requisição JSON
+app.use(express.json());
 
 // Utiliza a API
 app.use("/api", api);
