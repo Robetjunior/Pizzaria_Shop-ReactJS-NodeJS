@@ -27,7 +27,6 @@ export const storeAuthCode = async (userId, authCode) => {
     .update({ code: authCode })
     .match({ id: userId });
 
-  console.log(authCode, data);
   if (error) {
     console.error("Erro ao armazenar código de autenticação:", error);
     return null;
@@ -42,7 +41,6 @@ export const getUserIdByAuthCode = async (authCode) => {
     .select("id")
     .eq("code", authCode)
     .single();
-
   if (error || !data) {
     console.error("Erro ao buscar usuário pelo código de autenticação:", error);
     return null;

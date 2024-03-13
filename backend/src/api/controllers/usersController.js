@@ -13,6 +13,8 @@ import {
   deleteAuthCode,
 } from "../../services/userService.js";
 
+import jwt from "jsonwebtoken";
+
 export const getUsers = async (req, res) => {
   try {
     const users = await fetchUsers();
@@ -56,6 +58,7 @@ export const authenticateUserWithCode = async (req, res) => {
   const { code } = req.query;
   try {
     const userId = await getUserIdByAuthCode(code);
+    console.log(!userId);
     if (!userId) {
       return res
         .status(404)
@@ -66,6 +69,8 @@ export const authenticateUserWithCode = async (req, res) => {
     const token = jwt.sign({ id: userId }, "your_secret_key", {
       expiresIn: "1h",
     });
+
+    console.log(token);
 
     // Configurando o JWT em um cookie HttpOnly
     res.cookie("auth", token, {

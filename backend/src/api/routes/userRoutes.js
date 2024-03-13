@@ -4,11 +4,6 @@ import { authenticateJWT } from "../../middlewares/authenticate-jwt.js";
 
 const router = express.Router();
 
-// Definindo suas rotas e usando o middleware `authenticateJWT` nas rotas protegidas
-router.get("/protected-route", authenticateJWT, (req, res) => {
-  res.json({ message: "Você tem acesso a esta rota protegida!" });
-});
-
 // Rota para otimização de rota de visitação dos clientes
 router.get("/optimize-route", usersController.optimizeRoute);
 
