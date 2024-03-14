@@ -54,40 +54,6 @@ export const getUserByPhoneNumberController = async (req, res) => {
   }
 };
 
-export const authenticateUserWithCode = async (req, res) => {
-  const { code } = req.query;
-  try {
-    const userId = await getUserIdByAuthCode(code);
-    console.log(!userId);
-    if (!userId) {
-      return res
-        .status(404)
-        .json({ error: "Código de autenticação inválido ou expirado" });
-    }
-
-    // Supondo que a autenticação seja bem-sucedida e você tenha o ID do usuário, você gera um JWT
-    const token = jwt.sign({ id: userId }, "your_secret_key", {
-      expiresIn: "1h",
-    });
-
-    console.log(token);
-
-    // Configurando o JWT em um cookie HttpOnly
-    res.cookie("auth", token, {
-      httpOnly: true, // Importante para evitar acesso via JavaScript
-      secure: true, // Envia o cookie apenas sobre HTTPS
-      sameSite: "strict", // Restringe o envio do cookie a solicitações originárias do mesmo site
-      maxAge: 3600000, // Tempo de vida do cookie em milissegundos
-    });
-
-    await deleteAuthCode(code);
-
-    res.redirect("http://localhost:5173/");
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-};
-
 export const getUserByEmailToAuthenticate = async (req, res) => {
   try {
     const email = req.params.email;
@@ -104,13 +70,61 @@ export const getUserByEmailToAuthenticate = async (req, res) => {
     await storeAuthCode(user.id, authCode);
 
     const authLink = `http://localhost:3333/api/users/authenticate?code=${authCode}`;
-    console.log(authLink);
     // Aqui você pode enviar o link por email ao usuário
+
+    console.log(authLink);
 
     res.json({ message: "Link de autenticação enviado." });
   } catch (error) {
     res.status(500).send(error.message);
   }
+};
+
+export const authenticateUserWithCode = async (req, res) => {
+  const { code } = req.query;
+  try {
+    const userId = await getUserIdByAuthCode(code);
+    console.log(!userId);
+    if (!userId) {
+      return res
+        .status(404)
+        .json({ error: "Código de autenticação inválido ou expirado" });
+    }
+
+    // Supondo que a autenticação seja bem-sucedida e você tenha o ID do usuário, você gera um JWT
+    const token = jwt.sign({ id: userId }, "your_secret_key", {
+      expiresIn: "1h",
+    });
+
+    const redirectUrl = `http://localhost:5173/#/auth?token=${encodeURIComponent(
+      token
+    )}`;
+
+    // // Configurando o JWT em um cookie HttpOnly
+    // res.cookie("auth", token, {
+    //   httpOnly: true, // Importante para evitar acesso via JavaScript
+    //   secure: true, // Envia o cookie apenas sobre HTTPS
+    //   sameSite: "strict", // Restringe o envio do cookie a solicitações originárias do mesmo site
+    //   maxAge: 3600000, // Tempo de vida do cookie em milissegundos
+    // });
+
+    await deleteAuthCode(code);
+
+    res.redirect(redirectUrl);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+export const getProfile = async (req, res) => {
+  // O usuário já foi definido no middleware authenticateJWT
+  const user = req.user;
+  console.log(user);
+  if (!user) {
+    return res.status(404).json({ error: "User not found." });
+  }
+
+  return res.json(user);
 };
 
 export const addCliente = async (req, res) => {

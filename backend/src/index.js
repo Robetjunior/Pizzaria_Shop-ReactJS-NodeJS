@@ -7,8 +7,13 @@ const api = require("./api/api");
 const app = express();
 const port = 3333;
 
-// Aplica o CORS
-app.use(cors());
+// Configuração detalhada do CORS
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Substitua pela URL da sua aplicação front-end
+    credentials: true, // Permitir credenciais (cookies, sessão HTTP)
+  })
+);
 
 // Substitui bodyParser.json() pelo express.json() para análise de corpos de requisição JSON
 app.use(express.json());

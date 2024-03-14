@@ -8,8 +8,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useQuery } from "@tanstack/react-query";
+import { getProfile } from "../api/get-profile";
 
 export function AccountMenu() {
+  const { data: profile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+  });
+
+  console.log(profile);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -17,7 +25,7 @@ export function AccountMenu() {
           variant={"outline"}
           className="flex select-none items-center gap-2"
         >
-          Pizza Shop
+          {profile?.name}
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
