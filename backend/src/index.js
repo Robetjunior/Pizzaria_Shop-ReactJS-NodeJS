@@ -10,8 +10,8 @@ const port = 3333;
 // Configuração detalhada do CORS
 app.use(
   cors({
-    origin: "http://localhost:5173", // Substitua pela URL da sua aplicação front-end
-    credentials: true, // Permitir credenciais (cookies, sessão HTTP)
+    origin: "http://localhost:5173",
+    credentials: true,
   })
 );
 
