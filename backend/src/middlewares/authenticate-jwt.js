@@ -26,7 +26,6 @@ export const authenticateJWT = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.log(error);
     return res.status(403).json({ error: "Invalid token." });
   }
 };

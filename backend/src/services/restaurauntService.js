@@ -28,6 +28,41 @@ export const getManagedRestaurantService = async (managedId) => {
   return managedRestaurant;
 };
 
+export const updateProfileService = async ({ id, name, description }) => {
+  // Primeiro, buscamos o restaurante gerenciado pelo managerid fornecido
+  const { data: managedRestaurant, error: fetchError } = await supabase
+    .from("restaurants")
+    .select("*")
+    .eq("managerid", id)
+    .maybeSingle();
+
+  // Se houver erro na busca, logamos o erro e retornamos null
+  if (fetchError) {
+    console.error("Error fetching restaurant:", fetchError);
+    return null;
+  }
+
+  // Se o restaurante for encontrado, atualizamos o nome e a descrição
+  if (managedRestaurant) {
+    const { error: updateError } = await supabase
+      .from("restaurants")
+      .update({ name, description })
+      .eq("managerid", id);
+
+    // Se houver erro na atualização, logamos o erro e retornamos null
+    if (updateError) {
+      console.error("Error updating restaurant:", updateError);
+      return null;
+    }
+
+    // Retornamos o restaurante atualizado
+    return { ...managedRestaurant, name, description };
+  } else {
+    console.log("No restaurant found for the given managerid.");
+    return null;
+  }
+};
+
 export const createRestaurantWithManager = async ({
   restaurantName,
   managerName,

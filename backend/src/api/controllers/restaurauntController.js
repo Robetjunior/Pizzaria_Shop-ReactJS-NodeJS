@@ -2,6 +2,7 @@ import {
   fetchRestaurant,
   createRestaurantWithManager,
   getManagedRestaurantService,
+  updateProfileService,
 } from "../../services/restaurauntService.js";
 
 export const getRestaurants = async (req, res) => {
@@ -18,6 +19,23 @@ export const getManagedRestaurant = async (req, res) => {
     const userId = req.user.id;
     const managerRestaurant = await getManagedRestaurantService(userId);
     res.json(managerRestaurant);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    const id = req.user.id;
+
+    await updateProfileService({
+      id,
+      name,
+      description,
+    });
+
+    res.status(201).json({ message: `atualização efetuado com sucesso!` });
   } catch (error) {
     res.status(500).send(error.message);
   }

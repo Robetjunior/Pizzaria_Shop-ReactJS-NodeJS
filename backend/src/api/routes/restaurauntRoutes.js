@@ -14,4 +14,6 @@ router.get(
 
 router.post("/registerRestaurants", restaurantController.createRestaurant);
 
+router.put("/profile", authenticateJWT, restaurantController.updateProfile);
+
 export default router;
