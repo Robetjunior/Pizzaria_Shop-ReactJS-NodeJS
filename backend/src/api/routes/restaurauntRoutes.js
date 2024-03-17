@@ -6,6 +6,12 @@ const router = express.Router();
 
 router.get("/getRestaurants", restaurantController.getRestaurants);
 
+router.get(
+  "/getManagedRestaurant",
+  authenticateJWT,
+  restaurantController.getManagedRestaurant
+);
+
 router.post("/registerRestaurants", restaurantController.createRestaurant);
 
 export default router;

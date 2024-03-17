@@ -26,7 +26,6 @@ export const getUsers = async (req, res) => {
 
 export const getUserByIdController = async (req, res) => {
   try {
-    console.log("buscar usário por id");
     const user = await getUserById(req.params.id);
 
     if (!user) {
@@ -57,7 +56,6 @@ export const getUserByPhoneNumberController = async (req, res) => {
 export const getUserByEmailToAuthenticate = async (req, res) => {
   try {
     const email = req.params.email;
-    console.log("entrou aqui?", email);
     if (!email) {
       return res.status(400).json({ error: "Email inválido" });
     }
@@ -71,7 +69,6 @@ export const getUserByEmailToAuthenticate = async (req, res) => {
 
     const authLink = `http://localhost:3333/api/users/authenticate?code=${authCode}`;
     // Aqui você pode enviar o link por email ao usuário
-
     console.log(authLink);
 
     res.json({ message: "Link de autenticação enviado." });
@@ -84,7 +81,6 @@ export const authenticateUserWithCode = async (req, res) => {
   const { code } = req.query;
   try {
     const userId = await getUserIdByAuthCode(code);
-    console.log(!userId);
     if (!userId) {
       return res
         .status(404)
@@ -92,7 +88,7 @@ export const authenticateUserWithCode = async (req, res) => {
     }
 
     // Supondo que a autenticação seja bem-sucedida e você tenha o ID do usuário, você gera um JWT
-    const token = jwt.sign({ id: userId }, "your_secret_key", {
+    const token = jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1h",
     });
 
@@ -119,7 +115,6 @@ export const authenticateUserWithCode = async (req, res) => {
 export const getProfile = async (req, res) => {
   // O usuário já foi definido no middleware authenticateJWT
   const user = req.user;
-  console.log(user);
   if (!user) {
     return res.status(404).json({ error: "User not found." });
   }

@@ -1,16 +1,15 @@
 import { api } from "../lib/axios";
 
-interface GetProfileResponse {
-  name: string;
+interface GetManagedRestaurant {
   id: string;
-  email: string;
-  phone: string | null;
-  role: "manager" | "customer";
+  name: string;
   createdAt: Date | null;
   updatedAt: Date | null;
+  description: string | null;
+  managerId: string | null;
 }
 
-export async function getProfile() {
+export async function getManagedRestaurant() {
   const hash = window.location.hash;
   const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?") + 1));
   const token = urlParams.get("token");
@@ -29,11 +28,14 @@ export async function getProfile() {
     return null; // Ou handle de forma adequada
   }
 
-  const response = await api.get<GetProfileResponse>("api/users/auth/me", {
-    headers: {
-      Authorization: `Bearer ${storedToken}`,
+  const response = await api.get<GetManagedRestaurant>(
+    "api/restaurants/getManagedRestaurant",
+    {
+      headers: {
+        Authorization: `Bearer ${storedToken}`,
+      },
     },
-  });
+  );
 
   return response.data;
 }

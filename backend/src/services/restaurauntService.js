@@ -13,6 +13,21 @@ export const fetchRestaurant = async () => {
   return data;
 };
 
+export const getManagedRestaurantService = async (managedId) => {
+  const { data: managedRestaurant, error } = await supabase
+    .from("restaurants")
+    .select("*")
+    .eq("managerid", managedId)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching restaurants:", error);
+    return null;
+  }
+
+  return managedRestaurant;
+};
+
 export const createRestaurantWithManager = async ({
   restaurantName,
   managerName,
@@ -23,7 +38,6 @@ export const createRestaurantWithManager = async ({
   const formattedPhone = formatPhoneNumberToInternational(phone);
 
   const id = uuidv4();
-  console.log(id);
 
   const { data: _, error: managerError } = await supabase
     .from("users")
@@ -57,8 +71,6 @@ export const createRestaurantWithManager = async ({
       },
     ])
     .single();
-
-  console.log(restaurantError, `tem erro nocadastro da empresa?`);
 
   if (restaurantError) {
     return { error: restaurantError.message };

@@ -1,6 +1,7 @@
 import {
   fetchRestaurant,
   createRestaurantWithManager,
+  getManagedRestaurantService,
 } from "../../services/restaurauntService.js";
 
 export const getRestaurants = async (req, res) => {
@@ -12,9 +13,18 @@ export const getRestaurants = async (req, res) => {
   }
 };
 
+export const getManagedRestaurant = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const managerRestaurant = await getManagedRestaurantService(userId);
+    res.json(managerRestaurant);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
 export const createRestaurant = async (req, res) => {
   try {
-    console.log(req.body);
     const { restaurantName, managerName, email, phone } = req.body;
 
     await createRestaurantWithManager({

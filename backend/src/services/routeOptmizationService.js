@@ -9,7 +9,6 @@ function calculateDistance(x1, y1, x2, y2) {
 // Função para calcular a rota otimizada
 export async function calculateOptimizedRoute() {
   const users = await fetchUsers(); // Buscar usuários/clientes do banco de dados
-  console.log(users);
   const startPoint = { x: 0, y: 0 }; // Ponto de partida da empresa
   let currentPoint = startPoint;
   let route = [];
