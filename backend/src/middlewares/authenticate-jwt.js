@@ -22,7 +22,6 @@ export const authenticateJWT = async (req, res, next) => {
     if (error || !user) {
       throw new Error("User not found.");
     }
-
     req.user = user;
     next();
   } catch (error) {
