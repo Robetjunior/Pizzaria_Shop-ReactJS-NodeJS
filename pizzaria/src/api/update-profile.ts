@@ -6,7 +6,6 @@ interface UpdateProfileBody {
 }
 
 export async function updateProfile({ name, description }: UpdateProfileBody) {
-  console.log("???");
   const hash = window.location.hash;
   const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?") + 1));
   const token = urlParams.get("token");
