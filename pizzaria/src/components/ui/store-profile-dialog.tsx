@@ -11,7 +11,6 @@ import { Input } from "./input";
 import { Textarea } from "./textarea";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  GetManagedRestaurant,
   getManagedRestaurant,
 } from "../../api/get-managed-restaurant";
 import { useForm } from "react-hook-form";

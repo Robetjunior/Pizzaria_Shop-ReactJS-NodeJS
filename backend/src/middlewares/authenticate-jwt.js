@@ -23,7 +23,6 @@ export const authenticateJWT = async (req, res, next) => {
       throw new Error("User not found.");
     }
     req.user = user;
-    console.log(user, "response com value do user");
     next();
   } catch (error) {
     return res.status(403).json({ error: "Invalid token." });

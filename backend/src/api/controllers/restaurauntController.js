@@ -1,5 +1,11 @@
 // Import supabase client
 import { supabase } from "../../config/supabaseClient";
+import {
+  getManagedRestaurantService,
+  createRestaurantWithManager,
+  fetchRestaurant,
+  updateProfileService,
+} from "../../services/restaurauntService";
 
 export const getOrders = async (req, res) => {
   try {
