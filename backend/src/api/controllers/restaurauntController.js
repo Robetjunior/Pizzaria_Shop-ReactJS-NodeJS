@@ -17,7 +17,7 @@ export const getOrders = async (req, res) => {
         id, 
         created_at, 
         status, 
-        total_in_cents,
+        total,
         customer:users(name) // Ajuste baseado na suposição de que você tenha uma relação configurada
       `
       )

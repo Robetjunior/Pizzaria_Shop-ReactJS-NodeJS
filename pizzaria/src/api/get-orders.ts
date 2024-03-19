@@ -2,10 +2,10 @@ import { api } from "../lib/axios";
 
 export interface GetOrdersResponse {
   orders: {
-    orderId: string;
-    createdAt: Date;
-    status: "peding" | "canceled" | "processing" | "delivering";
-    customerName: string;
+    id: string;
+    created_at: string;
+    status: "pending" | "canceled" | "processing" | "delivering" | "delivered";
+    customer: any;
     total: number;
   }[];
   meta: {
