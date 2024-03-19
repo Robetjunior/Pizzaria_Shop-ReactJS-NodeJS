@@ -12,6 +12,8 @@ router.get(
   restaurantController.getManagedRestaurant
 );
 
+router.get("/orders", authenticateJWT, restaurantController.getOrders);
+
 router.post("/registerRestaurants", restaurantController.createRestaurant);
 
 router.put("/profile", authenticateJWT, restaurantController.updateProfile);

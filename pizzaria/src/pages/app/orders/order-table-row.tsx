@@ -4,9 +4,17 @@ import { ArrowRight, Search, X } from "lucide-react";
 import { Dialog, DialogTrigger } from "../../../components/ui/dialog";
 import { OrderDetails } from "./order-details";
 
-// export interface OrderTableRowProps {}
+export interface OrderTableRowProps {
+  order: {
+    orderId: string;
+    createdAt: Date;
+    status: "peding" | "canceled" | "processing" | "delivering";
+    customerName: string;
+    total: number;
+  };
+}
 
-export function OrderTableRow() {
+export function OrderTableRow({ order }: OrderTableRowProps) {
   return (
     <TableRow>
       <TableCell>
