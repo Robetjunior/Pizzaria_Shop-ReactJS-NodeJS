@@ -16,6 +16,26 @@ export const getOrders = async (req, res) => {
       return res.status(401).send("User is not a restaurant manager.");
     }
 
+    // Inicia a consulta para contar o total de itens sem aplicar paginação
+    const countQuery = supabase
+      .from("orders")
+      .select("id", { count: "exact" }) // Solicita a contagem exata
+      .eq("restaurant_id", restaurantId);
+
+    // Se necessário, aqui poderiam ser aplicados os mesmos filtros da consulta principal
+    if (orderId) {
+      countQuery.ilike("id", `%${orderId}%`);
+    }
+    if (customerName) {
+      // Aplicaria o filtro por nome do cliente, se a lógica estiver implementada
+    }
+    if (status) {
+      countQuery.eq("status", status);
+    }
+
+    const { count } = await countQuery;
+
+    // Consulta principal com paginação
     let query = supabase
       .from("orders")
       .select(
@@ -24,8 +44,8 @@ export const getOrders = async (req, res) => {
         created_at, 
         status, 
         total,
-        customer:users(name) // Ajuste baseado na suposição de que você tenha uma relação configurada
-      `
+        customer:users(name) 
+        `
       )
       .eq("restaurant_id", restaurantId)
       .order("created_at", { ascending: false });
@@ -34,8 +54,7 @@ export const getOrders = async (req, res) => {
       query = query.ilike("id", `%${orderId}%`);
     }
     if (customerName) {
-      // Atualize para refletir a lógica correta de filtrar por nome do cliente,
-      // isso pode exigir ajustes se a suposição sobre a relação estiver incorreta.
+      // Aplicaria o filtro por nome do cliente, se a lógica estiver implementada
     }
     if (status) {
       query = query.eq("status", status);
@@ -45,18 +64,19 @@ export const getOrders = async (req, res) => {
     const to = (pageIndex + 1) * 10 - 1;
     query = query.range(from, to);
 
-    const { data: orders, error, count } = await query;
+    const { data: orders, error } = await query;
 
     if (error) {
       throw error;
     }
 
+    // Retorna o JSON com a contagem correta
     res.json({
       orders,
       meta: {
         pageIndex: parseInt(pageIndex, 10),
         perPage: 10,
-        totalCount: count,
+        totalCount: count, // Utiliza a contagem real da consulta
       },
     });
   } catch (error) {

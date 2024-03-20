@@ -1,5 +1,9 @@
 import { api } from "../lib/axios";
 
+export interface GetOrdersQuery {
+  pageIndex?: number | null;
+}
+
 export interface GetOrdersResponse {
   orders: {
     id: string;
@@ -14,7 +18,7 @@ export interface GetOrdersResponse {
     totalCount: number;
   };
 }
-export async function getOrders() {
+export async function getOrders({ pageIndex }: GetOrdersQuery) {
   const hash = window.location.hash;
   const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?") + 1));
   const token = urlParams.get("token");
@@ -35,13 +39,12 @@ export async function getOrders() {
 
   const response = await api.get<GetOrdersResponse>("api/restaurants/orders", {
     params: {
-      pageIndex: 0,
+      pageIndex,
     },
     headers: {
       Authorization: `Bearer ${storedToken}`,
     },
   });
 
-  console.log(response.data);
   return response.data;
 }
