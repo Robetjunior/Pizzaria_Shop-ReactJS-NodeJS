@@ -45,13 +45,6 @@ export async function getOrders({
     return null; // Ou handle de forma adequada
   }
 
-  console.log({
-    pageIndex,
-    orderId,
-    customerName,
-    status,
-  });
-
   const response = await api.get<GetOrdersResponse>("api/restaurants/orders", {
     params: {
       pageIndex,
@@ -64,6 +57,5 @@ export async function getOrders({
     },
   });
 
-  console.log(response.data);
   return response.data;
 }
