@@ -9,78 +9,62 @@ import {
 
 export const getOrders = async (req, res) => {
   try {
-    const { pageIndex = 0, orderId, customerName, status } = req.query;
+    const { pageIndex, orderId, customerName, status } = req.query;
     const restaurantId = req.user.restaurant_id;
 
     if (!restaurantId) {
       return res.status(401).send("User is not a restaurant manager.");
     }
 
-    // Inicia a consulta para contar o total de itens sem aplicar paginação
-    const countQuery = supabase
-      .from("orders")
-      .select("id", { count: "exact" }) // Solicita a contagem exata
-      .eq("restaurant_id", restaurantId);
-
-    // Se necessário, aqui poderiam ser aplicados os mesmos filtros da consulta principal
-    if (orderId) {
-      countQuery.ilike("id", `%${orderId}%`);
-    }
-    if (customerName) {
-      // Aplicaria o filtro por nome do cliente, se a lógica estiver implementada
-    }
-    if (status) {
-      countQuery.eq("status", status);
-    }
-
-    const { count } = await countQuery;
-
-    // Consulta principal com paginação
+    // Start the count query to calculate total number of orders based on filters
     let query = supabase
       .from("orders")
-      .select(
-        `
-        id, 
-        created_at, 
-        status, 
-        total,
-        customer:users(name) 
-        `
-      )
+      .select(`id, created_at, status, total, customer:users(name)`)
       .eq("restaurant_id", restaurantId)
       .order("created_at", { ascending: false });
 
+    // Aplica filtros que podem ser feitos diretamente na consulta
     if (orderId) {
       query = query.ilike("id", `%${orderId}%`);
-    }
-    if (customerName) {
-      // Aplicaria o filtro por nome do cliente, se a lógica estiver implementada
     }
     if (status) {
       query = query.eq("status", status);
     }
 
-    const from = pageIndex * 10;
-    const to = (pageIndex + 1) * 10 - 1;
-    query = query.range(from, to);
-
+    // Executa a consulta sem paginação para aplicar o filtro de nome do cliente posteriormente
     const { data: orders, error } = await query;
 
     if (error) {
       throw error;
     }
 
-    // Retorna o JSON com a contagem correta
+    // Aplica o filtro de nome do cliente
+    let filteredOrders = customerName
+      ? orders.filter(
+          (order) =>
+            order.customer &&
+            order.customer.name
+              .toLowerCase()
+              .includes(customerName.toLowerCase())
+        )
+      : orders;
+
+    // Calcula a quantidade total de registros após os filtros
+    const totalCount = filteredOrders.length;
+
+    // Aplica a paginação manualmente
+    filteredOrders = filteredOrders.slice(pageIndex * 10, (pageIndex + 1) * 10);
+
     res.json({
-      orders,
+      orders: filteredOrders,
       meta: {
         pageIndex: parseInt(pageIndex, 10),
         perPage: 10,
-        totalCount: count, // Utiliza a contagem real da consulta
+        totalCount,
       },
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send(error.message);
   }
 };

@@ -7,6 +7,7 @@ export const authenticateJWT = async (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN_AQUI
 
   if (!token) {
+    console.log("esta sem token");
     return res.status(403).json({ error: "Access Denied: No token provided." });
   }
 
