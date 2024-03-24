@@ -6,15 +6,15 @@ export interface GetOrderDetailsParams {
 
 export interface GetOrderDetailsResponse {
   id: string;
-  createAt: string;
+  created_at: string;
   status: "pending" | "canceled" | "processing" | "delivering" | "delivered";
   totalInCents: number;
   customer: {
     name: string;
     email: string;
-    phone: string | null;
+    phone_number: string | null;
   };
-  orderItens: {
+  orderItems: {
     id: string;
     priceInCents: number;
     quantity: number;
@@ -44,7 +44,7 @@ export async function getOrderDetails({ orderId }: GetOrderDetailsParams) {
   }
 
   const response = await api.get<GetOrderDetailsResponse>(
-    `/orders/${orderId}`,
+    `api/restaurants/orders/${orderId}`,
     {
       headers: {
         Authorization: `Bearer ${storedToken}`,

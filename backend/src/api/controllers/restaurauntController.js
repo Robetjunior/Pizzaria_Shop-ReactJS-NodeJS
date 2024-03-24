@@ -5,6 +5,7 @@ import {
   createRestaurantWithManager,
   fetchRestaurant,
   updateProfileService,
+  getOrderDetailsService,
 } from "../../services/restaurauntService";
 
 export const getOrders = async (req, res) => {
@@ -63,6 +64,28 @@ export const getOrders = async (req, res) => {
         totalCount,
       },
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const getOrderDetails = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const restaurantId = req.user.restaurant_id;
+
+    if (!restaurantId) {
+      return res.status(401).send({ error: "Not a manager." });
+    }
+
+    const order = await getOrderDetailsService(orderId, restaurantId);
+
+    if (!order) {
+      return res.status(404).send({ error: "Order not found." });
+    }
+
+    res.json(order);
   } catch (error) {
     console.error(error);
     res.status(500).send(error.message);

@@ -2,6 +2,7 @@
 import { supabase } from "../config/supabaseClient";
 import { formatPhoneNumberToInternational } from "../utils/formatPhoneNumberToInternational";
 import { v4 as uuidv4 } from "uuid";
+import { generateOrderItems } from "../utils/generateOrderItems";
 
 export const fetchRestaurant = async () => {
   const { data, error } = await supabase.from("restaurants").select("*");
@@ -11,6 +12,48 @@ export const fetchRestaurant = async () => {
   }
 
   return data;
+};
+
+export const getOrderDetailsService = async (orderId, restaurantId) => {
+  try {
+    const { data, error } = await supabase.rpc("fetch_order_details", {
+      order_id_param: orderId,
+      restaurant_id_param: restaurantId,
+    });
+
+    if (error) {
+      console.error("Failed to fetch order details:", error);
+      throw new Error("Failed to fetch order details");
+    }
+
+    if (!data || data.length === 0) {
+      throw new Error("No data found");
+    }
+
+    const orderDetails = data[0];
+
+    // Exemplo de como você poderia gerar os orderItems fictícios
+    const generatedOrderItems = generateOrderItems(orderDetails.totalincents);
+
+    // Incorpora os itens fictícios no detalhe do pedido
+    const transformedOrderDetails = {
+      id: orderDetails.id,
+      created_at: orderDetails.created_at,
+      status: orderDetails.status,
+      totalInCents: orderDetails.totalincents,
+      customer: {
+        name: orderDetails.customername,
+        email: orderDetails.customeremail,
+        phone_number: orderDetails.customerphonenumber,
+      },
+      orderItems: generatedOrderItems,
+    };
+
+    return transformedOrderDetails;
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    throw new Error("An error occurred while fetching order details");
+  }
 };
 
 export const getManagedRestaurantService = async (managedId) => {

@@ -66,7 +66,7 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
                   Telefone
                 </TableCell>
                 <TableCell className="flex justify-end">
-                  {order.customer.phone ?? "Não informado"}
+                  {order.customer.phone_number ?? "Não informado"}
                 </TableCell>
               </TableRow>
 
@@ -82,10 +82,12 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
                   Realizado há
                 </TableCell>
                 <TableCell className="flex justify-end">
-                  {formatDistanceToNow(order.createAt, {
-                    locale: ptBR,
-                    addSuffix: true,
-                  })}
+                  {order.created_at
+                    ? formatDistanceToNow(new Date(order.created_at), {
+                        locale: ptBR,
+                        addSuffix: true,
+                      })
+                    : "Data não informada"}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -101,7 +103,7 @@ export function OrderDetails({ orderId, open }: OrderDetailsProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {order.orderItens.map((item) => {
+              {order.orderItems.map((item) => {
                 return (
                   <TableRow key={item.id}>
                     <TableCell>{item.product.name}</TableCell>
