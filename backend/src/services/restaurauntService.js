@@ -14,6 +14,66 @@ export const fetchRestaurant = async () => {
   return data;
 };
 
+export const cancelOrderService = async ({ orderId }) => {
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ status: "canceled" })
+    .match({ id: orderId })
+    .single();
+
+  if (error) {
+    console.error("Erro ao cancelar pedido no banco de dados:", error);
+    return { error: true, message: error.message };
+  }
+
+  return { error: false, data };
+};
+
+export const approveOrderService = async ({ orderId }) => {
+  const { data: order, error } = await supabase
+    .from("orders")
+    .update({ status: "processing" })
+    .match({ id: orderId, status: "pending" })
+    .single();
+
+  if (error) {
+    console.error("Erro ao aprovar pedido no banco de dados:", error);
+    return { error: true, message: error.message };
+  }
+
+  return { error: false };
+};
+
+export const deliverOrderService = async ({ orderId }) => {
+  const { data: order, error } = await supabase
+    .from("orders")
+    .update({ status: "delivered" })
+    .match({ id: orderId, status: "delivering" })
+    .single();
+
+  if (error) {
+    console.error("Erro ao entregar pedido no banco de dados:", error);
+    return { error: true, message: error.message };
+  }
+
+  return { error: false };
+};
+
+export const dispatchOrderService = async ({ orderId }) => {
+  const { data: order, error } = await supabase
+    .from("orders")
+    .update({ status: "delivering" })
+    .match({ id: orderId, status: "processing" })
+    .single();
+
+  if (error) {
+    console.error("Erro ao enviar pedido ao cliente no banco de dados:", error);
+    return { error: true, message: error.message };
+  }
+
+  return { error: false };
+};
+
 export const getOrderDetailsService = async (orderId, restaurantId) => {
   try {
     const { data, error } = await supabase.rpc("fetch_order_details", {

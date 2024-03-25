@@ -6,6 +6,10 @@ import {
   fetchRestaurant,
   updateProfileService,
   getOrderDetailsService,
+  cancelOrderService,
+  approveOrderService,
+  deliverOrderService,
+  dispatchOrderService,
 } from "../../services/restaurauntService";
 
 export const getOrders = async (req, res) => {
@@ -88,6 +92,63 @@ export const getOrderDetails = async (req, res) => {
     res.json(order);
   } catch (error) {
     console.error(error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const result = await cancelOrderService({ orderId });
+    if (result.error) {
+      throw new Error(result.message);
+    }
+    res.status(200).json({ message: "Pedido cancelado com sucesso." });
+  } catch (error) {
+    console.error("Erro ao cancelar pedido:", error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const approveOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const result = await approveOrderService({ orderId });
+    if (result.error) {
+      return res.status(400).json({ message: result.message });
+    }
+    res.status(200).json({ message: "Pedido aprovado com sucesso." });
+  } catch (error) {
+    console.error("Erro ao aprovar pedido:", error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const deliverOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const result = await deliverOrderService({ orderId });
+    if (result.error) {
+      return res.status(400).json({ message: result.message });
+    }
+    res.status(200).json({ message: "Pedido entregue com sucesso." });
+  } catch (error) {
+    console.error("Erro ao entregar pedido:", error);
+    res.status(500).send(error.message);
+  }
+};
+
+export const dispatchOrder = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const result = await dispatchOrderService({ orderId });
+    if (result.error) {
+      return res.status(400).json({ message: result.message });
+    }
+    console.log(`pedido enviado ao cliente com sucesso`);
+    res.status(200).json({ message: "Pedido enviado ao cliente com sucesso." });
+  } catch (error) {
+    console.error("Erro ao enviar pedido ao cliente:", error);
     res.status(500).send(error.message);
   }
 };

@@ -5,7 +5,6 @@ export const authenticateJWT = async (req, res, next) => {
   // Extrai o token do cabeçalho Authorization
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN_AQUI
-
   if (!token) {
     return res.status(403).json({ error: "Access Denied: No token provided." });
   }
