@@ -1,11 +1,11 @@
 import { api } from "../lib/axios";
 
-export interface GetMonthRevenuetResponse {
-  receipt: number;
-  diffFromLastMonth: number;
-}
+export type GetPopularProductsResponse = {
+  product_id: string;
+  amount: number;
+}[];
 
-export async function getMonthRevenue() {
+export async function getPopularProducts() {
   const hash = window.location.hash;
   const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?") + 1));
   const token = urlParams.get("token");
@@ -23,8 +23,8 @@ export async function getMonthRevenue() {
     console.error("Nenhum token armazenado encontrado.");
     return null; // Ou handle de forma adequada
   }
-  const response = await api.get<GetMonthRevenuetResponse>(
-    "api/metrics/month-revenue",
+  const response = await api.get<GetPopularProductsResponse>(
+    "api/metrics/popular-products",
     {
       headers: {
         Authorization: `Bearer ${storedToken}`,
