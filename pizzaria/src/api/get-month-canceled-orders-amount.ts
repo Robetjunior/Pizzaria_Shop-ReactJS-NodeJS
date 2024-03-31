@@ -1,10 +1,11 @@
 import { api } from "../lib/axios";
 
-export interface DispatchOrderParams {
-  orderId: string;
+export interface GetMonthCanceldOrdersAmountResponse {
+  amount: number;
+  diffFromLastMonth: number;
 }
 
-export async function dispatchOrder({ orderId }: DispatchOrderParams) {
+export async function getMonthCanceldOrdersAmount() {
   const hash = window.location.hash;
   const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?") + 1));
   const token = urlParams.get("token");
@@ -23,14 +24,14 @@ export async function dispatchOrder({ orderId }: DispatchOrderParams) {
     return null; // Ou handle de forma adequada
   }
 
-  await api.patch(
-    `api/restaurants/orders/${orderId}/dispatch`,
-    {},
+  const response = await api.get<GetMonthCanceldOrdersAmountResponse>(
+    "api/metrics/month-canceled-orders-amount",
     {
       headers: {
         Authorization: `Bearer ${storedToken}`,
       },
     },
   );
-  console.log(`foi dispatch`);
+
+  return response.data;
 }

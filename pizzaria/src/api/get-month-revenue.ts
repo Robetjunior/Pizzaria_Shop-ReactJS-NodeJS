@@ -1,10 +1,11 @@
 import { api } from "../lib/axios";
 
-export interface DispatchOrderParams {
-  orderId: string;
+export interface GetMonthRevenuetResponse {
+  receipt: number;
+  diffFromLastMonth: number;
 }
 
-export async function dispatchOrder({ orderId }: DispatchOrderParams) {
+export async function getMonthRevenue() {
   const hash = window.location.hash;
   const urlParams = new URLSearchParams(hash.substring(hash.indexOf("?") + 1));
   const token = urlParams.get("token");
@@ -22,15 +23,16 @@ export async function dispatchOrder({ orderId }: DispatchOrderParams) {
     console.error("Nenhum token armazenado encontrado.");
     return null; // Ou handle de forma adequada
   }
-
-  await api.patch(
-    `api/restaurants/orders/${orderId}/dispatch`,
-    {},
+  const response = await api.get<GetMonthRevenuetResponse>(
+    "api/metrics/month-revenue",
     {
       headers: {
         Authorization: `Bearer ${storedToken}`,
       },
     },
   );
-  console.log(`foi dispatch`);
+
+  console.log("deu certo?", response.data);
+
+  return response.data;
 }
