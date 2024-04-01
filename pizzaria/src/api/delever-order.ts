@@ -23,8 +23,6 @@ export async function deliverOrder({ orderId }: DeliverOrderParams) {
     return null; // Ou handle de forma adequada
   }
 
-  console.log(`rota de deliver`);
-
   await api.patch(
     `api/restaurants/orders/${orderId}/deliver`,
     {},
@@ -34,5 +32,4 @@ export async function deliverOrder({ orderId }: DeliverOrderParams) {
       },
     },
   );
-  console.log(`foi deliver`);
 }

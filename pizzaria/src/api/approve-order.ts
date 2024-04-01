@@ -23,7 +23,6 @@ export async function approveOrder({ orderId }: ApproveOrderParams) {
     return null; // Ou handle de forma adequada
   }
 
-  console.log(`rota de approve`);
   await api.patch(
     `api/restaurants/orders/${orderId}/approve`,
     {},
@@ -33,6 +32,4 @@ export async function approveOrder({ orderId }: ApproveOrderParams) {
       },
     },
   );
-
-  console.log(`foi`);
 }

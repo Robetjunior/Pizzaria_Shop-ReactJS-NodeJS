@@ -32,5 +32,4 @@ export async function dispatchOrder({ orderId }: DispatchOrderParams) {
       },
     },
   );
-  console.log(`foi dispatch`);
 }

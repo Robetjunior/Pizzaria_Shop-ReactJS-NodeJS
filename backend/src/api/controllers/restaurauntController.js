@@ -145,7 +145,6 @@ export const dispatchOrder = async (req, res) => {
     if (result.error) {
       return res.status(400).json({ message: result.message });
     }
-    console.log(`pedido enviado ao cliente com sucesso`);
     res.status(200).json({ message: "Pedido enviado ao cliente com sucesso." });
   } catch (error) {
     console.error("Erro ao enviar pedido ao cliente:", error);

@@ -197,12 +197,26 @@ export const getPopularProductsAmount = async (restaurantId) => {
     const { data: orderItems, error } = await supabase
       .from("order_items")
       .select("product_id")
-      .eq("restaurant_id", restaurantId) // Se você tem um campo restaurant_id nos seus itens de pedido
-      .gte("created_at", startOfMonth);
+      .eq("restaurant_id", restaurantId)
+      .gte("created_at", startOfMonth)
+      .then((response) => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return response;
+      })
+      .catch((error) => {
+        console.error("Error fetching order items:", error);
+        throw error;
+      });
 
     if (error) {
       throw new Error(error.message);
     }
+
+    console.log("Total order items fetched:", orderItems.length); // Corrija para pegar o tamanho do array
+
+    console.log("Fetched order items:", orderItems);
 
     // Agora, realizamos o agrupamento e contagem no lado do servidor
     const productCount = orderItems.reduce((acc, item) => {
@@ -217,6 +231,8 @@ export const getPopularProductsAmount = async (restaurantId) => {
         amount: productCount[key],
       }))
       .sort((a, b) => b.amount - a.amount);
+
+    console.log("Sorted products:", sortedProducts);
 
     return sortedProducts;
   } catch (error) {

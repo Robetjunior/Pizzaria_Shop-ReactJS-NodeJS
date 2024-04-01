@@ -24,8 +24,6 @@ export async function updateProfile({ name, description }: UpdateProfileBody) {
     return null; // Ou handle de forma adequada
   }
 
-  console.log("vai chamar a função");
-
   await api.put(
     "/api/restaurants/profile",
     { name, description },

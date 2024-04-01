@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getDailyRevenueInPeriod } from "../../../api/get-daily-revenue-in-period";
 import { Label } from "../../../components/ui/label";
 import { DateRangePicker } from "../../../components/ui/date-range-picker";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { subDays } from "date-fns";
 
@@ -40,6 +40,15 @@ export function RevenueChart() {
       }),
   });
 
+  const chartData = useMemo(() => {
+    return dailyRevenueInPeriod?.map((chartItem) => {
+      return {
+        date: chartItem.date,
+        revenue: chartItem.revenue / 100,
+      };
+    });
+  }, [dailyRevenueInPeriod]);
+
   return (
     <Card className="col-span-6">
       <CardHeader className="flex-row items-center justify-between pb-8">
@@ -57,9 +66,9 @@ export function RevenueChart() {
       </CardHeader>
 
       <CardContent>
-        {dailyRevenueInPeriod && (
+        {chartData && (
           <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={dailyRevenueInPeriod} style={{ fontSize: 12 }}>
+            <LineChart data={chartData} style={{ fontSize: 12 }}>
               <XAxis
                 dataKey={"date"}
                 tickLine={false}

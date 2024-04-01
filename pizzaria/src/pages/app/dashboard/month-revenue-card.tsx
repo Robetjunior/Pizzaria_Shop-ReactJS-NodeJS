@@ -14,10 +14,6 @@ export function MonthRevenueCard() {
     queryKey: ["metrics", "month-revenue"],
   });
 
-  console.log(
-    (1234.56).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
-  );
-
   return (
     <Card>
       <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
@@ -30,7 +26,7 @@ export function MonthRevenueCard() {
         {monthRevenue && (
           <>
             <span className="text-2xl font-bold tracking-tight">
-              {Number(monthRevenue.receipt).toLocaleString("pt-BR", {
+              {Number(monthRevenue.receipt / 100).toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",
               })}

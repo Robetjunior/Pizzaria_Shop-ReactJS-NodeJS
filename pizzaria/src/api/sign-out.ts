@@ -8,8 +8,6 @@ export async function signOut() {
     return null; // Ou handle de forma adequada
   }
 
-  console.log("vai chamar a função");
-
   await api.post(
     "/api/sign-out/sign-out",
     {},
