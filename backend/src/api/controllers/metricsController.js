@@ -1,9 +1,11 @@
 // src/controllers/metricsController.js
 import {
+  getDailyRevenueInPeriodService,
   getDayOrdersMetrics,
   getMonthCanceledOrdersAmount,
   getMonthOrdersAmount,
   getMonthReceipt,
+  getPopularProductsAmount,
 } from "../../services/metricsService";
 
 export const getDayOrdersAmount = async (req, res) => {
@@ -67,8 +69,45 @@ export const getMonthlyOrdersAmount = async (req, res) => {
     }
 
     const ordersAmountData = await getMonthOrdersAmount(restaurantId);
-    console.log(ordersAmountData);
     res.json(ordersAmountData);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+export const getPopularProducts = async (req, res) => {
+  try {
+    const restaurantId = req.user.restaurant_id;
+    if (!restaurantId) {
+      return res
+        .status(401)
+        .send("User is not associated with any restaurant.");
+    }
+
+    const popularProductsData = await getPopularProductsAmount(restaurantId);
+    res.json(popularProductsData);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+export const getDailyRevenueInPeriod = async (req, res) => {
+  try {
+    const restaurantId = req.user.restaurant_id;
+    if (!restaurantId) {
+      return res
+        .status(401)
+        .send("User is not associated with any restaurant.");
+    }
+
+    const { from, to } = req.query;
+    const revenueData = await getDailyRevenueInPeriodService(
+      restaurantId,
+      from,
+      to
+    );
+    console.log(revenueData);
+    res.json(revenueData);
   } catch (error) {
     res.status(500).send(error.message);
   }

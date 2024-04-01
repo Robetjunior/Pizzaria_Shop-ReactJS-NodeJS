@@ -188,3 +188,79 @@ export const getMonthOrdersAmount = async (restaurantId) => {
     throw error;
   }
 };
+
+export const getPopularProductsAmount = async (restaurantId) => {
+  try {
+    const startOfMonth = dayjs().startOf("month").toISOString();
+
+    // Ajuste a consulta para buscar apenas os itens necessários sem agrupamento
+    const { data: orderItems, error } = await supabase
+      .from("order_items")
+      .select("product_id")
+      .eq("restaurant_id", restaurantId) // Se você tem um campo restaurant_id nos seus itens de pedido
+      .gte("created_at", startOfMonth);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Agora, realizamos o agrupamento e contagem no lado do servidor
+    const productCount = orderItems.reduce((acc, item) => {
+      acc[item.product_id] = (acc[item.product_id] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Transforma o objeto em um array e ordena pelo número de pedidos
+    const sortedProducts = Object.keys(productCount)
+      .map((key) => ({
+        product_id: key,
+        amount: productCount[key],
+      }))
+      .sort((a, b) => b.amount - a.amount);
+
+    return sortedProducts;
+  } catch (error) {
+    console.error("Error fetching popular products amount:", error);
+    throw error;
+  }
+};
+
+export const getDailyRevenueInPeriodService = async (
+  restaurantId,
+  from,
+  to
+) => {
+  try {
+    const startDate = from
+      ? dayjs(from).startOf("day")
+      : dayjs().subtract(7, "days").startOf("day");
+    const endDate = to ? dayjs(to).endOf("day") : dayjs().endOf("day");
+
+    const { data, error } = await supabase
+      .from("orders")
+      .select("created_at, total")
+      .eq("restaurant_id", restaurantId)
+      .gte("created_at", startDate.toISOString())
+      .lte("created_at", endDate.toISOString());
+
+    if (error) throw error;
+
+    // Processa os dados para calcular o recebimento diário
+    const dailyRevenue = {}; // Exemplo: {'2023-03-31': 1500, ...}
+    data.forEach((order) => {
+      const day = dayjs(order.created_at).format("YYYY-MM-DD");
+      dailyRevenue[day] = (dailyRevenue[day] || 0) + order.total;
+    });
+
+    // Converte o objeto em array de objetos
+    const revenueData = Object.keys(dailyRevenue).map((date) => ({
+      date,
+      revenue: dailyRevenue[date],
+    }));
+
+    return revenueData;
+  } catch (error) {
+    console.error("Error fetching daily revenue in period:", error);
+    throw error;
+  }
+};
