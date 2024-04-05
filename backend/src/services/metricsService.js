@@ -214,10 +214,6 @@ export const getPopularProductsAmount = async (restaurantId) => {
       throw new Error(error.message);
     }
 
-    console.log("Total order items fetched:", orderItems.length); // Corrija para pegar o tamanho do array
-
-    console.log("Fetched order items:", orderItems);
-
     // Agora, realizamos o agrupamento e contagem no lado do servidor
     const productCount = orderItems.reduce((acc, item) => {
       acc[item.product_id] = (acc[item.product_id] || 0) + 1;
